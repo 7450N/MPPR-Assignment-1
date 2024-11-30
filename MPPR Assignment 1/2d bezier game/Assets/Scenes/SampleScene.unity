@@ -1457,7 +1457,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f2e84225428619b46abcd38da473dc8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fragmentCount: 4
+  fragmentCount: 6
   fragmentLifetime: 2
 --- !u!1 &1664535814
 GameObject:

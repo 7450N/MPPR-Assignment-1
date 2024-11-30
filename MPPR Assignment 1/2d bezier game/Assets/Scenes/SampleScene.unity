@@ -1298,6 +1298,7 @@ GameObject:
   - component: {fileID: 1436795184}
   - component: {fileID: 1436795186}
   - component: {fileID: 1436795187}
+  - component: {fileID: 1436795188}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -1444,6 +1445,20 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 4
+--- !u!114 &1436795188
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1436795182}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2e84225428619b46abcd38da473dc8d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fragmentCount: 4
+  fragmentLifetime: 2
 --- !u!1 &1664535814
 GameObject:
   m_ObjectHideFlags: 0
@@ -1957,6 +1972,10 @@ PrefabInstance:
       objectReference: {fileID: 17764636}
     - target: {fileID: 5141415407840000696, guid: 73a7f2bdf79bae64ba948c3588620921, type: 3}
       propertyPath: m_Name
+      value: Enemy
+      objectReference: {fileID: 0}
+    - target: {fileID: 5141415407840000696, guid: 73a7f2bdf79bae64ba948c3588620921, type: 3}
+      propertyPath: m_TagString
       value: Enemy
       objectReference: {fileID: 0}
     - target: {fileID: 6343493323449698318, guid: 73a7f2bdf79bae64ba948c3588620921, type: 3}

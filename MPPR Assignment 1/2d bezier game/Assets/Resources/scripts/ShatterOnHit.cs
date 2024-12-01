@@ -35,38 +35,54 @@ public class ShatterOnHit : MonoBehaviour
     }
 
     private void Shatter()
-    {
+    {   // Get the size of the player sprite
         Vector2 size = GetComponent<Renderer>().bounds.size;
+
+        // Retrieve the sprite and color of the current object
         Sprite playerSprite = GetComponent<SpriteRenderer>().sprite;
         Color playerColor = GetComponent<SpriteRenderer>().color;
 
+        // Calculate size of the fragments
         float fragmentSize = size.x / fragmentCount;
+
+        // Calculate the starting position for fragment placement (top-left corner of the object's bounds)
         Vector2 startPos = (Vector2)transform.position - (Vector2.right + Vector2.up) * size / 2;
+
+        // Loop through a grid to create fragments
         for (int i = 0; i < fragmentCount; i++)
         {
             for (int j = 0; j < fragmentCount; j++)
             {
+                // Calculate the position of each fragment in the grid
                 Vector2 position = startPos + new Vector2(i, j) * fragmentSize;
 
+                // Create a new GameObject to represent the fragment
                 GameObject fragment = new GameObject("Fragment");
                 fragment.transform.position = position;
 
+                // Set the same sprite and color as the parent object;
                 SpriteRenderer sr = fragment.AddComponent<SpriteRenderer>();
                 sr.sprite = playerSprite;
                 sr.color = playerColor;
 
+                // Add a Rigidbody2D to make the fragment movable
                 Rigidbody2D rb = fragment.AddComponent<Rigidbody2D>();
-                rb.gravityScale = 0;
+                rb.gravityScale = 0;  // Disable gravity as it will not be used in this game
                 rb.velocity = Vector2.zero;
 
+                // Start a coroutine to apply an "ease-in" force to the fragment
                 StartCoroutine(ApplyEaseInForce(rb));
 
+                // Set the fragment's size by scaling it down
                 fragment.transform.localScale = Vector3.one * fragmentSize;
 
                 Destroy(fragment, fragmentLifetime);
             }
         }
+        // Disable the current object's Renderer to make it invisible during shatter period
         GetComponent<Renderer>().enabled = false;
+
+        // Destroy the original object after all fragments are gone
         Destroy(gameObject, fragmentLifetime);
     }
 
@@ -74,8 +90,9 @@ public class ShatterOnHit : MonoBehaviour
     {
         float duration = fragmentLifetime;
         float timeElapsed = 0f;
-        Vector2 randomDirection = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
-        Vector2 newPosition = rb.position + randomDirection * Random.Range(-6f, 6f);
+
+        Vector2 randomDirection = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;  // Choose a random direction for the fragment's movement
+        Vector2 newPosition = rb.position + randomDirection * Random.Range(-6f, 6f);    // Calculate the final position based on the random direction and range
         Vector2 startPosition = rb.position;
 
         while (timeElapsed < duration)
@@ -83,10 +100,9 @@ public class ShatterOnHit : MonoBehaviour
             timeElapsed += Time.deltaTime;
             float t = timeElapsed / duration;
             t = Mathf.Clamp01(t);
-            t = 1 - Mathf.Pow(1 - t, 2);
 
-            Vector2 interpolatedPosition = (1 - t) * startPosition + t * newPosition;
-            //Vector2 interpolatedPosition = Interpolation.Lerp(startPosition, newPosition, t, Interpolation.EasingType.EaseOut);
+            // Interpolate the position using a custom easing function (EaseOut)
+            Vector2 interpolatedPosition = Interpolation.Lerp(startPosition, newPosition, t, Interpolation.EasingType.EaseOut);
             rb.position = interpolatedPosition;
 
             yield return null;
@@ -118,7 +134,7 @@ public class ShatterOnHit : MonoBehaviour
         {
             StartCoroutine(PhaseDuration());
         }
-    }
+    }   
 
     IEnumerator PhaseDuration()
     {

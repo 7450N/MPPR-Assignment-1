@@ -9,6 +9,25 @@ public class BezierCurve : MonoBehaviour
     [HideInInspector]
     public float resolution = 0.033f;
 
+    private LineRenderer lineRenderer;
+
+    void Start()
+    {
+        lineRenderer = gameObject.GetComponent<LineRenderer>();
+    }
+
+    void Update()
+    {
+        List<Vector3> curvePoints = new List<Vector3>();
+        for (float t = 0; t <= 1; t += resolution)
+        {
+            curvePoints.Add(CalculateBezierPoint(t, controlPoints));
+        }
+
+        lineRenderer.positionCount = curvePoints.Count;
+        lineRenderer.SetPositions(curvePoints.ToArray());
+    }
+
     void OnDrawGizmos()
     {
         if (controlPoints == null || controlPoints.Count < 2)

@@ -7,13 +7,18 @@ public class ShatterOnHit : MonoBehaviour
     //public MoveAlongBezierCurve moveBezier;
     public int fragmentCount = 4;
     public float fragmentLifetime = 2f;
-
-     void OnTriggerEnter2D(Collider2D collision)  
+    public MoveAlongBezierCurve moveBezier;
+    public Powerups powerups;
+    public bool phase = false;
+    public float phaseDuration = 0.5f;
+    void OnTriggerEnter2D(Collider2D collision)  
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        Debug.Log("Phase value: " + phase);
+        if (!phase && collision.gameObject.CompareTag("Enemy"))
         {
             Debug.Log("Collided with enemy");
             Shatter();
+            moveBezier.movement = false;
         }
     }
 
@@ -74,5 +79,19 @@ public class ShatterOnHit : MonoBehaviour
             yield return null;
         }
 
+    }        
+    IEnumerator PhaseDuration()
+    {
+
+        yield return new WaitForSeconds(phaseDuration);
+        phase = false;
+        Debug.Log("Phase deactivated");
+    }
+    private void Update()
+    {
+        if (phase)
+        {
+            StartCoroutine(PhaseDuration());
+        }
     }
 }

@@ -4,11 +4,13 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+//Created by Jason
+
 public class SceneLoader : MonoBehaviour
 {
-    public GameObject loadingScreen;
+    public GameObject loadingScreen;       
     public Slider loadingSlider;
-    public float fillSpeed = 1f;
+    public float fillSpeed = 1f;           //loading bar speed
     public float minLoadTime = 2f;        //no instant loading screen for better ux. 2s should be fine.
     public AudioManager audioManager;
 
@@ -16,19 +18,19 @@ public class SceneLoader : MonoBehaviour
     {
         if (audioManager != null)
         {
-            StartCoroutine(audioManager.FadeOutAudio());
+            StartCoroutine(audioManager.FadeOutAudio());                    //when the scene is loading, stop the background music of this scene by using interpolation
         }
         else
         {
-            Debug.Log("Audio is not attache!");
+            Debug.Log("Audio is not attached!");
         }
         StartCoroutine(ShowProgress(name));
     }
 
     IEnumerator ShowProgress(string name)
     {
-        AsyncOperation operation = SceneManager.LoadSceneAsync(name);
-        operation.allowSceneActivation = false; // Prevent scene activation until we're ready
+        AsyncOperation operation = SceneManager.LoadSceneAsync(name);         // load the scene asynchronously
+        operation.allowSceneActivation = false; // Prevent scene activation until minLoadtime has passed
         loadingScreen.SetActive(true);
 
         float elapsedTime = 0f;
@@ -41,7 +43,7 @@ public class SceneLoader : MonoBehaviour
             float progress = Mathf.Clamp01(operation.progress / 0.9f);
 
             // Smoothly interpolate the progress bar
-            float interpolatedProgress = Interpolation.FloatLerp(loadingSlider.value, progress, fillSpeed * Time.deltaTime);
+            float interpolatedProgress = Interpolation.FloatLerp(loadingSlider.value, progress, fillSpeed * Time.deltaTime);          
             loadingSlider.value = interpolatedProgress;
 
             yield return null;
@@ -51,6 +53,6 @@ public class SceneLoader : MonoBehaviour
         loadingSlider.value = 1f;
 
         // Now activate the scene
-        operation.allowSceneActivation = true;
+        operation.allowSceneActivation = true;     
     }
 }

@@ -2,9 +2,11 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+//Created by Jason
+
 public class Interpolation : MonoBehaviour
 {
-    public enum EasingType
+    public enum EasingType       //easing Type
     {
         Linear = 0,
         EaseIn,
@@ -13,7 +15,7 @@ public class Interpolation : MonoBehaviour
     }
 
 
-    public static Vector3 Lerp(Vector3 posA, Vector3 posB, float t, EasingType easingType = 0)
+    public static Vector3 Lerp(Vector3 posA, Vector3 posB, float t, EasingType easingType = 0)       //interpolation of vector 3 
     {
         t = Mathf.Clamp01(t);
         // Apply an easing function to t
@@ -43,7 +45,7 @@ public class Interpolation : MonoBehaviour
         return interpolatedPos;                             //return the interpolated value
     }
 
-    public static float FloatLerp(float posA, float posB, float t, EasingType easingType = 0)
+    public static float FloatLerp(float posA, float posB, float t, EasingType easingType = 0)     //interpolation of float
     {
         t = Mathf.Clamp01(t);
         // Apply an easing function to t

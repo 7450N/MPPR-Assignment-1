@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
+//Created by Jason
+
 public class MyButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
     private bool isHovering = false;

@@ -810,6 +810,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   loadingScreen: {fileID: 1082537218}
   loadingSlider: {fileID: 452421164}
+  fillSpeed: 1
+  minLoadTime: 2
 --- !u!1 &1034973379
 GameObject:
   m_ObjectHideFlags: 0

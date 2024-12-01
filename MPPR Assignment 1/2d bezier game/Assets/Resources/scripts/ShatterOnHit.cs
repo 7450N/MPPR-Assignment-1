@@ -4,14 +4,25 @@ using UnityEngine;
 
 public class ShatterOnHit : MonoBehaviour
 {
-    //public MoveAlongBezierCurve moveBezier;
+    // Panel reference
+    public RectTransform panel;  // Panel to move down
+    public Vector2 offScreenPosition = new Vector2(0, 1000);  // Offscreen position
+    public Vector2 onScreenPosition = new Vector2(0, 0);  // Onscreen position
+    public float tweenDuration = 1.0f;  // Duration for the tween
+
+    // Fragment details
     public int fragmentCount = 4;
     public float fragmentLifetime = 2f;
     public MoveAlongBezierCurve moveBezier;
     public Powerups powerups;
     public bool phase = false;
     public float phaseDuration = 0.5f;
-    void OnTriggerEnter2D(Collider2D collision)  
+
+    // Tweening flag
+    private bool isPanelMoving = false;
+    private float panelTimeElapsed = 0.0f;
+
+    void OnTriggerEnter2D(Collider2D collision)
     {
         Debug.Log("Phase value: " + phase);
         if (!phase && collision.gameObject.CompareTag("Enemy"))
@@ -19,6 +30,7 @@ public class ShatterOnHit : MonoBehaviour
             Debug.Log("Collided with enemy");
             Shatter();
             moveBezier.movement = false;
+            StartPanelTween();  // Start the panel movement
         }
     }
 
@@ -27,7 +39,7 @@ public class ShatterOnHit : MonoBehaviour
         Vector2 size = GetComponent<Renderer>().bounds.size;
         Sprite playerSprite = GetComponent<SpriteRenderer>().sprite;
         Color playerColor = GetComponent<SpriteRenderer>().color;
- 
+
         float fragmentSize = size.x / fragmentCount;
         Vector2 startPos = (Vector2)transform.position - (Vector2.right + Vector2.up) * size / 2;
         for (int i = 0; i < fragmentCount; i++)
@@ -50,7 +62,7 @@ public class ShatterOnHit : MonoBehaviour
                 StartCoroutine(ApplyEaseInForce(rb));
 
                 fragment.transform.localScale = Vector3.one * fragmentSize;
-                
+
                 Destroy(fragment, fragmentLifetime);
             }
         }
@@ -78,20 +90,39 @@ public class ShatterOnHit : MonoBehaviour
 
             yield return null;
         }
-
-    }        
-    IEnumerator PhaseDuration()
-    {
-
-        yield return new WaitForSeconds(phaseDuration);
-        phase = false;
-        Debug.Log("Phase deactivated");
     }
+
+    // Start the panel tween when triggered
+    private void StartPanelTween()
+    {
+        isPanelMoving = true;
+        panelTimeElapsed = 0.0f;  // Reset time counter
+    }
+
     private void Update()
     {
+        if (isPanelMoving)
+        {
+            panelTimeElapsed += Time.deltaTime;
+            float t = panelTimeElapsed / tweenDuration;
+            panel.anchoredPosition = Vector2.Lerp(onScreenPosition, offScreenPosition, t);
+
+            if (t >= 1.0f)
+            {
+                isPanelMoving = false;  // Stop panel movement when finished
+            }
+        }
+
         if (phase)
         {
             StartCoroutine(PhaseDuration());
         }
+    }
+
+    IEnumerator PhaseDuration()
+    {
+        yield return new WaitForSeconds(phaseDuration);
+        phase = false;
+        Debug.Log("Phase deactivated");
     }
 }

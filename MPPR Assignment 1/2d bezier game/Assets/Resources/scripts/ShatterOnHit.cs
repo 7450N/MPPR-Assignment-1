@@ -86,6 +86,7 @@ public class ShatterOnHit : MonoBehaviour
             t = 1 - Mathf.Pow(1 - t, 2);
 
             Vector2 interpolatedPosition = (1 - t) * startPosition + t * newPosition;
+            //Vector2 interpolatedPosition = Interpolation.Lerp(startPosition, newPosition, t, Interpolation.EasingType.EaseOut);
             rb.position = interpolatedPosition;
 
             yield return null;

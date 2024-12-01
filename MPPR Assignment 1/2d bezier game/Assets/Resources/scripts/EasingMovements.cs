@@ -27,7 +27,7 @@ public class EasingMovements : MonoBehaviour
         // Interpolate between pointA and pointB
         Vector3 startPos = isReversing ? pointB.position : pointA.position;
         Vector3 endPos = isReversing ? pointA.position : pointB.position;
-        transform.position = Vector3.Lerp(startPos, endPos, t);
+        transform.position = Interpolation.Lerp(startPos, endPos, t);
 
         // Handle looping or ping-pong behavior
         if (elapsedTime >= duration)

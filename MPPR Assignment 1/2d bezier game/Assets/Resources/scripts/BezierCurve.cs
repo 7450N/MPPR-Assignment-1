@@ -38,7 +38,7 @@ public class BezierCurve : MonoBehaviour
             List<Vector3> newPoints = new List<Vector3>();
             for (int i = 0; i < currentPoints.Count - 1; i++)
             {
-                newPoints.Add(Vector3.Lerp(currentPoints[i], currentPoints[i + 1], t));
+                newPoints.Add(Interpolation.Lerp(currentPoints[i], currentPoints[i + 1], t));
             }
             currentPoints = newPoints;
         }

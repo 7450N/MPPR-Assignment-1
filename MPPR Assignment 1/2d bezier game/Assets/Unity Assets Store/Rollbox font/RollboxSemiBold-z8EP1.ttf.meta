@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: 17d59c74c059ca84293437fda6a96176
+guid: adcf86ace27878541bd63d4161362b6c
 TrueTypeFontImporter:
   externalObjects: {}
   serializedVersion: 4
@@ -8,7 +8,8 @@ TrueTypeFontImporter:
   characterSpacing: 0
   characterPadding: 1
   includeFontData: 1
-  fontNames: []
+  fontNames:
+  - Rollbox
   fallbackFontReferences: []
   customCharacters: 
   fontRenderingMode: 0

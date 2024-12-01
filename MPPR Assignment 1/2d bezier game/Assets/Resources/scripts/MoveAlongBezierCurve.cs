@@ -24,7 +24,10 @@ public class MoveAlongBezierCurve : MonoBehaviour
         {        
             Vector3 position = bezierCurve.CalculateBezierPoint(t, bezierCurve.controlPoints);
             t += (travelSpeed/100) * Time.deltaTime / bezierCurve.resolution;
-            player.position = position;
+            if (player != null)
+            {
+                player.position = position;
+            }    
         }
 
 

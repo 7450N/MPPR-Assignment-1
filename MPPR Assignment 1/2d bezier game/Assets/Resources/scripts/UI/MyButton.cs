@@ -9,36 +9,37 @@ public class MyButton : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 
     public RectTransform cursorUI; // Reference to the UI element acting as the cursor
     public float rotationSpeed = 100f; // Speed of rotation
-    public float rotationSmoothing = 5f; // Interpolation smoothing factor
+    public float rotationSmoothing = 10f; // Interpolation smoothing factor
 
     private Vector3 targetRotation = Vector3.zero; // Target rotation as Vector3
     private Vector3 currentRotation = Vector3.zero; // Current rotation as Vector3
 
     void Update()
     {
+        Debug.Log("Enter exit");
         if (isHovering)
         {
             // Update the target rotation around the Z-axis
             targetRotation.z += rotationSpeed * Time.deltaTime;
-            targetRotation.z %= 360;
+            
         }
-
-        // Smoothly interpolate current rotation towards the target rotation
+        else
+        {
+            float times = Mathf.Ceil(targetRotation.z / 180f);           //calculate how many times semi-loop has passed
+            float angleDiff = (180f * times) - targetRotation.z;         // angle needed to complete another semi-loo[
+            targetRotation.z += angleDiff;
+        }
         currentRotation = Vector3.Lerp(currentRotation, targetRotation, Time.deltaTime * rotationSmoothing);
-
-        // Apply the interpolated rotation to the cursor
-        cursorUI.localRotation = Quaternion.Euler(currentRotation);
+        cursorUI.rotation = Quaternion.Euler(currentRotation);
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        isHovering = true;
-        Debug.Log("Hovering over button");
+        isHovering = true; ;
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
         isHovering = false;
-        Debug.Log("Stopped hovering over button");
     }
 }

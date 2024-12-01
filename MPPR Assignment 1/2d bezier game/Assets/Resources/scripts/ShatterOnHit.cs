@@ -36,11 +36,11 @@ public class ShatterOnHit : MonoBehaviour
 
     private void Shatter()
     {
-        Vector2 size = GetComponent<Renderer>().bounds.size;
+        Vector2 size = GetComponent<Renderer>().bounds.size;  // Get the size of the player sprite
         Sprite playerSprite = GetComponent<SpriteRenderer>().sprite;
         Color playerColor = GetComponent<SpriteRenderer>().color;
 
-        float fragmentSize = size.x / fragmentCount;
+        float fragmentSize = size.x / fragmentCount;  // Calculate size of the fragments
         Vector2 startPos = (Vector2)transform.position - (Vector2.right + Vector2.up) * size / 2;
         for (int i = 0; i < fragmentCount; i++)
         {
@@ -83,10 +83,10 @@ public class ShatterOnHit : MonoBehaviour
             timeElapsed += Time.deltaTime;
             float t = timeElapsed / duration;
             t = Mathf.Clamp01(t);
-            t = 1 - Mathf.Pow(1 - t, 2);
+            //t = 1 - Mathf.Pow(1 - t, 2);
 
-            Vector2 interpolatedPosition = (1 - t) * startPosition + t * newPosition;
-            //Vector2 interpolatedPosition = Interpolation.Lerp(startPosition, newPosition, t, Interpolation.EasingType.EaseOut);
+            //Vector2 interpolatedPosition = (1 - t) * startPosition + t * newPosition;
+            Vector2 interpolatedPosition = Interpolation.Lerp(startPosition, newPosition, t, Interpolation.EasingType.EaseOut);
             rb.position = interpolatedPosition;
 
             yield return null;

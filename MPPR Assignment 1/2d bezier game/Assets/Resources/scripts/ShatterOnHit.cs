@@ -7,13 +7,18 @@ public class ShatterOnHit : MonoBehaviour
     //public MoveAlongBezierCurve moveBezier;
     public int fragmentCount = 4;
     public float fragmentLifetime = 2f;
-
-     void OnTriggerEnter2D(Collider2D collision)  
+    public MoveAlongBezierCurve moveBezier;
+    public Powerups powerups;
+    public bool phase = false;
+    public float phaseDuration = 0.5f;
+    void OnTriggerEnter2D(Collider2D collision)  
     {
-        if (collision.gameObject.CompareTag("Enemy"))
+        Debug.Log("Phase value: " + phase);
+        if (!phase && collision.gameObject.CompareTag("Enemy"))
         {
             Debug.Log("Collided with enemy");
             Shatter();
+            moveBezier.movement = false;
         }
     }
 
@@ -40,19 +45,53 @@ public class ShatterOnHit : MonoBehaviour
 
                 Rigidbody2D rb = fragment.AddComponent<Rigidbody2D>();
                 rb.gravityScale = 0;
-                //rb.AddForce(new Vector2(Random.Range(-3f,3f), Random.Range(-3f,3f)) * 5f, ForceMode2D.Impulse);
-                float t = Random.Range(0.0f, 1.0f);
-                float easedForce = 1 - Mathf.Pow(1 - t, 2);
-                Vector2 randomForce = new Vector2(Random.Range(-2f, 2f), Random.Range(-2f, 2f)) * 4f * easedForce;
-                rb.AddForce(randomForce, ForceMode2D.Impulse);
-                    
+                rb.velocity = Vector2.zero;
+
+                StartCoroutine(ApplyEaseInForce(rb));
+
                 fragment.transform.localScale = Vector3.one * fragmentSize;
-
+                
                 Destroy(fragment, fragmentLifetime);
-
             }
         }
+        GetComponent<Renderer>().enabled = false;
+        Destroy(gameObject, fragmentLifetime);
+    }
 
-        //Destroy(gameObject);
+    private IEnumerator ApplyEaseInForce(Rigidbody2D rb)
+    {
+        float duration = fragmentLifetime;
+        float timeElapsed = 0f;
+        Vector2 randomDirection = new Vector2(Random.Range(-1f, 1f), Random.Range(-1f, 1f)).normalized;
+        Vector2 newPosition = rb.position + randomDirection * Random.Range(-6f, 6f);
+        Vector2 startPosition = rb.position;
+
+        while (timeElapsed < duration)
+        {
+            timeElapsed += Time.deltaTime;
+            float t = timeElapsed / duration;
+            t = Mathf.Clamp01(t);
+            t = 1 - Mathf.Pow(1 - t, 2);
+
+            Vector2 interpolatedPosition = (1 - t) * startPosition + t * newPosition;
+            rb.position = interpolatedPosition;
+
+            yield return null;
+        }
+
+    }        
+    IEnumerator PhaseDuration()
+    {
+
+        yield return new WaitForSeconds(phaseDuration);
+        phase = false;
+        Debug.Log("Phase deactivated");
+    }
+    private void Update()
+    {
+        if (phase)
+        {
+            StartCoroutine(PhaseDuration());
+        }
     }
 }

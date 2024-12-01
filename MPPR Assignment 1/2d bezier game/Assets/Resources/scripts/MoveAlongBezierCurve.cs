@@ -20,7 +20,6 @@ public class MoveAlongBezierCurve : MonoBehaviour
             return;
         }
 
-
         if (movement == true)
         {        
             Vector3 position = bezierCurve.CalculateBezierPoint(t, bezierCurve.controlPoints);
@@ -40,4 +39,6 @@ public class MoveAlongBezierCurve : MonoBehaviour
         movement = true;
         Debug.Log("Button Pressed");
     }
+
+
 }

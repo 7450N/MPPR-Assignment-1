@@ -1,14 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;  // Required for color manipulation
 
 public class ShatterOnHit : MonoBehaviour
 {
     // Panel reference
-    public RectTransform panel;  // Panel to move down
-    public Vector2 offScreenPosition = new Vector2(0, 1000);  // Offscreen position
-    public Vector2 onScreenPosition = new Vector2(0, 0);  // Onscreen position
-    public float tweenDuration = 1.0f;  // Duration for the tween
+    public RectTransform panel;  // Panel to move in
+    public Vector2 offScreenPosition = new Vector2(-1000, 0);  // Offscreen position (left)
+    public Vector2 onScreenPosition = new Vector2(0, 0);  // Onscreen position (center)
+    public float tweenDuration = 1.5f;  // Duration for the tween
+
+    // Color-related
+    public Image panelImage;  // Panel background image for color fade
+    public Color startColor = new Color(1, 1, 1, 0);  // Transparent
+    public Color endColor = new Color(1, 1, 1, 1);  // Fully visible
 
     // Fragment details
     public int fragmentCount = 4;
@@ -18,19 +24,18 @@ public class ShatterOnHit : MonoBehaviour
     public bool phase = false;
     public float phaseDuration = 0.5f;
 
-    // Tweening flag
+    // Tweening control
     private bool isPanelMoving = false;
     private float panelTimeElapsed = 0.0f;
 
     void OnTriggerEnter2D(Collider2D collision)
     {
-        Debug.Log("Phase value: " + phase);
         if (!phase && collision.gameObject.CompareTag("Enemy"))
         {
             Debug.Log("Collided with enemy");
             Shatter();
             moveBezier.movement = false;
-            StartPanelTween();  // Start the panel movement
+            StartPanelTween();  // Trigger the game-over animation
         }
     }
 
@@ -60,7 +65,6 @@ public class ShatterOnHit : MonoBehaviour
                 rb.velocity = Vector2.zero;
 
                 StartCoroutine(ApplyEaseInForce(rb));
-
                 fragment.transform.localScale = Vector3.one * fragmentSize;
 
                 Destroy(fragment, fragmentLifetime);
@@ -83,21 +87,21 @@ public class ShatterOnHit : MonoBehaviour
             timeElapsed += Time.deltaTime;
             float t = timeElapsed / duration;
             t = Mathf.Clamp01(t);
-            t = 1 - Mathf.Pow(1 - t, 2);
+            t = 1 - Mathf.Pow(1 - t, 2);  // Ease-in quadratic interpolation
 
             Vector2 interpolatedPosition = (1 - t) * startPosition + t * newPosition;
-            //Vector2 interpolatedPosition = Interpolation.Lerp(startPosition, newPosition, t, Interpolation.EasingType.EaseOut);
             rb.position = interpolatedPosition;
 
             yield return null;
         }
     }
 
-    // Start the panel tween when triggered
     private void StartPanelTween()
     {
         isPanelMoving = true;
         panelTimeElapsed = 0.0f;  // Reset time counter
+        panel.anchoredPosition = offScreenPosition;  // Start offscreen
+        if (panelImage != null) panelImage.color = startColor;  // Set initial transparency
     }
 
     private void Update()
@@ -105,12 +109,24 @@ public class ShatterOnHit : MonoBehaviour
         if (isPanelMoving)
         {
             panelTimeElapsed += Time.deltaTime;
-            float t = panelTimeElapsed / tweenDuration;
-            panel.anchoredPosition = Vector2.Lerp(onScreenPosition, offScreenPosition, t);
+            float t = Mathf.Clamp01(panelTimeElapsed / tweenDuration);
 
+            // Ease-in-out quadratic easing for smoother movement
+            float easedT = EaseInOutQuad(t);
+
+            // Position interpolation
+            panel.anchoredPosition = Vector2.Lerp(offScreenPosition, onScreenPosition, easedT);
+
+            // Color interpolation for fading
+            if (panelImage != null)
+            {
+                panelImage.color = Color.Lerp(startColor, endColor, easedT);
+            }
+
+            // Stop animation once complete
             if (t >= 1.0f)
             {
-                isPanelMoving = false;  // Stop panel movement when finished
+                isPanelMoving = false;
             }
         }
 
@@ -118,6 +134,11 @@ public class ShatterOnHit : MonoBehaviour
         {
             StartCoroutine(PhaseDuration());
         }
+    }
+
+    private float EaseInOutQuad(float t)
+    {
+        return t < 0.5f ? 2 * t * t : 1 - Mathf.Pow(-2 * t + 2, 2) / 2;
     }
 
     IEnumerator PhaseDuration()

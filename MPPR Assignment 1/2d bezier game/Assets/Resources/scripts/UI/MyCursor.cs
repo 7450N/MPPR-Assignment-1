@@ -9,6 +9,7 @@ public class MyCursor : MonoBehaviour
     {
         // Hide the default cursor at the start
         Cursor.visible = false;
+        Cursor.lockState = CursorLockMode.Confined;
     }
 
     void Update()

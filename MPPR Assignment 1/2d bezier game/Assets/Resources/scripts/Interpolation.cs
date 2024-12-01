@@ -12,6 +12,7 @@ public class Interpolation : MonoBehaviour
         EaseInOut
     }
 
+
     public static Vector3 Lerp(Vector3 posA, Vector3 posB, float t, EasingType easingType = 0)
     {
         t = Mathf.Clamp01(t);

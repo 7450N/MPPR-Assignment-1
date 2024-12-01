@@ -10,9 +10,18 @@ public class SceneLoader : MonoBehaviour
     public Slider loadingSlider;
     public float fillSpeed = 1f;
     public float minLoadTime = 2f;        //no instant loading screen for better ux. 2s should be fine.
+    public AudioManager audioManager;
 
     public void LoadScene(string name)
     {
+        if (audioManager != null)
+        {
+            StartCoroutine(audioManager.FadeOutAudio());
+        }
+        else
+        {
+            Debug.Log("Audio is not attache!");
+        }
         StartCoroutine(ShowProgress(name));
     }
 
